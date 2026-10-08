@@ -1,0 +1,18 @@
+name: Transfer verified APK
+on:
+  push:
+    paths: [".github/workflows/publish-apk.yml"]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download and verify APK
+        run: |
+          curl --fail --location --retry 3 "https://expo.dev/artifacts/eas/z9LuFXgJYoboS0bMRTDzrel7SUN7EjM1QwVkBmK7KeY.apk" -o GO-SMART-1.1.2.apk
+          echo "ab0afc26ed7d0bd4fbab16c0e5696be8ea6dd922344cc43bb07a09f720ebd8b1  GO-SMART-1.1.2.apk" | sha256sum --check
+      - name: Upload release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload android-v1.1.2 GO-SMART-1.1.2.apk --repo salehsalip1-svg/gosmart-app-downloads --clobber
